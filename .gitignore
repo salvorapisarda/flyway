@@ -1,0 +1,44 @@
+# Cargo build directory
+/target/
+
+# Rust/Cargo specific files
+**/*.rs.bk
+
+# If using Cargo.lock in libraries, you may ignore it.
+# (Binary applications should commit Cargo.lock)
+# Cargo.lock
+
+# Backup files
+*.log
+*.tmp
+*.bak
+
+# OS-specific files
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# Editor directories and files
+# VS Code
+.vscode/
+*.code-workspace
+
+# JetBrains / CLion / IntelliJ
+.idea/
+*.iml
+
+# Vim / Neovim
+*.swp
+*.swo
+
+# Emacs
+*~
+
+# Rustfmt backup files
+**/*.rs.bk
+
+# WASM build artifacts (if using wasm32)
+pkg/
+wasm-pack.log
