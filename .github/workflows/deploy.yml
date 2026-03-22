@@ -40,5 +40,5 @@ jobs:
           personal_token: ${{ secrets.USER_PAGES_PAT }}
           external_repository: salvorapisarda/salvorapisarda.github.io
           publish_branch: main
-          publish_dir: ./flyway
+          publish_dir: ./site
           force_orphan: true
