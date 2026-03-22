@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>My Game</title>
+    <title>Flyway</title>
     <style>
         html,
         body,
@@ -22,13 +22,7 @@
 <body>
 <canvas id="glcanvas" tabindex='1'></canvas>
 <!-- Minified and statically hosted version of https://github.com/not-fl3/macroquad/blob/master/js/mq_js_bundle.js -->
-<script src="https://notfl3.github.io/miniquad/mq_js_bundle.js"></script>
-<script>
-    // Load the WASM binary
-    load("flyway.wasm").catch(err => {
-        console.error("Failed to load flyway.wasm:", err);
-        document.body.innerHTML = "<h1>Error loading game</h1><p>" + err + "</p>";
-    });
-</script>
+<script src="mq_js_bundle.js"></script>
+<script>load("flyway.wasm");</script> <!-- Your compiled WASM binary -->
 </body>
 </html>
