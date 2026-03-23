@@ -1,5 +1,12 @@
 use macroquad::prelude::*;
 
+// struct Shape {
+//     size: f32,
+//     speed: f32,
+//     x: f32,
+//     y: f32,
+// }
+
 #[macroquad::main("Flyway")]
 async fn main() {
     let mut x = screen_width() / 2.0;
