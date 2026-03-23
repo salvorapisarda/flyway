@@ -25,7 +25,6 @@ jobs:
         run: |
           cargo install basic-http-server --locked
           cargo install wasm-bindgen-cli --locked
-          cargo install macroquad --locked
           cargo build --target wasm32-unknown-unknown --release
 
       - name: Prepare Deployment Directory
