@@ -14,41 +14,41 @@ async fn main() {
     // let mut x = screen_width() / 2.0;
     // let mut y = screen_height() / 2.0;
 
-    let mut squares:Vec<Shape> = vec![];
+    let mut meteorites:Vec<Shape> = vec![];
 
-    let mut circle = Shape {
+    let mut number_block = Shape {
         size: 32.0,
         speed: MOVEMENT_SPEED,
         x: screen_width() / 2.0,
         y: screen_height() / 2.0,
     };
 
-    circle.x = clamp(circle.x, 0.0, screen_width());
-    circle.y = clamp(circle.y, 0.0, screen_height());
+    number_block.x = clamp(number_block.x, 0.0, screen_width());
+    number_block.y = clamp(number_block.y, 0.0, screen_height());
     loop {
         clear_background(DARKPURPLE);
         let delta_time = get_frame_time();
 
         if is_key_down(KeyCode::Right) {
-            circle.x += MOVEMENT_SPEED * delta_time;
+            number_block.x += MOVEMENT_SPEED * delta_time;
         }
         if is_key_down(KeyCode::Left) {
-            circle.x -= MOVEMENT_SPEED * delta_time;
+            number_block.x -= MOVEMENT_SPEED * delta_time;
         }
         if is_key_down(KeyCode::Down) {
-            circle.y += MOVEMENT_SPEED * delta_time;
+            number_block.y += MOVEMENT_SPEED * delta_time;
         }
         if is_key_down(KeyCode::Up) {
-            circle.y -= MOVEMENT_SPEED * delta_time;
+            number_block.y -= MOVEMENT_SPEED * delta_time;
         }
 
-        circle.x = clamp(circle.x, 0.0, screen_width());
-        circle.y = clamp(circle.y, 0.0, screen_height());
+        number_block.x = clamp(number_block.x, 0.0, screen_width());
+        number_block.y = clamp(number_block.y, 0.0, screen_height());
 
         // Add enemy squares
         if rand::gen_range(0, 99) >= 95 {
             let size = rand::gen_range(16.0, 64.0);
-            squares.push(Shape {
+            meteorites.push(Shape {
                 size,
                 speed: rand::gen_range(50.0, 150.0),
                 x: rand::gen_range(size / 2.0, screen_width() - size / 2.0),
@@ -57,16 +57,16 @@ async fn main() {
         }
 
         // Update square positions
-        for square in &mut squares {
-            square.y += square.speed * delta_time;
+        for meteor in &mut meteorites {
+            meteor.y += meteor.speed * delta_time;
         }
 
         // Remove invisible squares
-        squares.retain(|square| square.y < screen_height() + square.size);
+        meteorites.retain(|square| square.y < screen_height() + square.size);
 
-        draw_circle(circle.x, circle.y, 16.0, YELLOW);
+        draw_circle(number_block.x, number_block.y, 16.0, YELLOW);
 
-        for square in &squares {
+        for square in &meteorites {
             draw_rectangle(
                 square.x - square.size / 2.0,
                 square.y - square.size / 2.0,
