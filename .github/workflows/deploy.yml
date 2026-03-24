@@ -22,10 +22,7 @@ jobs:
           override: true
 
       - name: Build
-        run: |
-          cargo install basic-http-server --locked
-          cargo install wasm-bindgen-cli --locked
-          cargo build --target wasm32-unknown-unknown --release
+        run: cargo build --target wasm32-unknown-unknown --release
 
       - name: Prepare Deployment Directory
         run: |
