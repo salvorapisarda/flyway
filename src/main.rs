@@ -5,6 +5,7 @@ struct Shape {
     speed: f32,
     x: f32,
     y: f32,
+    collided: bool,
 }
 
 impl Shape {
@@ -29,6 +30,7 @@ async fn main() {
     // let mut x = screen_width() / 2.0;
     // let mut y = screen_height() / 2.0;
 
+    let mut bullets: Vec<Shape> = vec![];
     let mut meteorites: Vec<Shape> = vec![];
 
     let mut number_block = Shape {
@@ -36,6 +38,7 @@ async fn main() {
         speed: MOVEMENT_SPEED,
         x: screen_width() / 2.0,
         y: screen_height() / 2.0,
+        collided: false,
     };
 
     number_block.x = clamp(number_block.x, 0.0, screen_width());
@@ -60,6 +63,16 @@ async fn main() {
             if is_key_down(KeyCode::Up) {
                 number_block.y -= MOVEMENT_SPEED * delta_time;
             }
+            // Shoot bullets
+            if is_key_pressed(KeyCode::Space) {
+                bullets.push(Shape {
+                    x: number_block.x,
+                    y: number_block.y,
+                    speed: number_block.speed * 2.0,
+                    size: 5.0,
+                    collided: false,
+                });
+            }
 
             number_block.x = clamp(number_block.x, 0.0, screen_width());
             number_block.y = clamp(number_block.y, 0.0, screen_height());
@@ -72,6 +85,7 @@ async fn main() {
                     speed: rand::gen_range(50.0, 150.0),
                     x: rand::gen_range(size / 2.0, screen_width() - size / 2.0),
                     y: -size,
+                    collided: false,
                 });
             }
 
@@ -79,9 +93,18 @@ async fn main() {
             for meteor in &mut meteorites {
                 meteor.y += meteor.speed * delta_time;
             }
+            // Update bullet positions
+            for bullet in &mut bullets {
+                bullet.y -= bullet.speed * delta_time;
+            }
 
             // Remove invisible squares
             meteorites.retain(|square| square.y < screen_height() + square.size);
+            // Remove invisible bullets
+            bullets.retain(|bullet| bullet.y > 0.0 - bullet.size / 2.0);
+
+            meteorites.retain(|square| !square.collided);
+            bullets.retain(|bullet| !bullet.collided);
         }
 
         // Check for collisions
@@ -92,14 +115,28 @@ async fn main() {
             game_over = true;
         }
 
+        // Check for bullet collisions
+        for meteorite in meteorites.iter_mut() {
+            for bullet in bullets.iter_mut() {
+                if bullet.collides_with(meteorite) {
+                    bullet.collided = true;
+                    meteorite.collided = true;
+                }
+            }
+        }
+
         if game_over && is_key_pressed(KeyCode::Space) {
             meteorites.clear();
+            bullets.clear();
             number_block.x = screen_width() / 2.0;
             number_block.y = screen_height() / 2.0;
             game_over = false;
         }
 
-        // Draw the number block and meteorites
+        // Draw everything
+        for bullet in &bullets {
+            draw_circle(bullet.x, bullet.y, bullet.size / 2.0, RED);
+        }
         draw_circle(number_block.x, number_block.y, 16.0, YELLOW);
         for square in &meteorites {
             draw_rectangle(
