@@ -1,3 +1,4 @@
+use macroquad_particles::{self as particles, ColorCurve, Emitter, EmitterConfig};
 use macroquad::prelude::*;
 use std::fs;
 
@@ -48,6 +49,27 @@ enum GameState {
     Paused,
     GameOver,
 }
+fn particle_explosion() -> particles::EmitterConfig {
+    particles::EmitterConfig {
+        local_coords: false,
+        one_shot: true,
+        emitting: true,
+        lifetime: 0.6,
+        lifetime_randomness: 0.3,
+        explosiveness: 0.65,
+        initial_direction_spread: 2.0 * std::f32::consts::PI,
+        initial_velocity: 300.0,
+        initial_velocity_randomness: 0.8,
+        size: 3.0,
+        size_randomness: 0.3,
+        colors_curve: ColorCurve {
+            start: RED,
+            mid: ORANGE,
+            end: RED,
+        },
+        ..Default::default()
+    }
+}
 
 #[macroquad::main("Flyway")]
 async fn main() {
@@ -55,6 +77,7 @@ async fn main() {
 
     let mut bullets: Vec<Shape> = vec![];
     let mut meteorites: Vec<Shape> = vec![];
+    let mut explosions: Vec<(Emitter, Vec2)> = vec![];
 
     let mut number_block = Shape {
         size: 32.0,
@@ -117,6 +140,7 @@ async fn main() {
                 if is_key_pressed(KeyCode::Space) {
                     meteorites.clear();
                     bullets.clear();
+                    explosions.clear();
                     number_block.x = screen_width() / 2.0;
                     number_block.y = screen_height() / 2.0;
                     score = 0;
@@ -194,6 +218,10 @@ async fn main() {
 
                 meteorites.retain(|square| !square.collided);
                 bullets.retain(|bullet| !bullet.collided);
+
+                // Remove old explosions
+                explosions.retain(|(explosion, _)| explosion.config.emitting);
+
                 // }
 
                 // Check for collisions
@@ -210,6 +238,14 @@ async fn main() {
                             high_score = high_score.max(score);
                             bullet.collided = true;
                             meteorite.collided = true;
+
+                            explosions.push((
+                                Emitter::new(EmitterConfig {
+                                    amount: meteorite.size.round() as u32 * 2,
+                                    ..particle_explosion()
+                                }),
+                                vec2(meteorite.x, meteorite.y),
+                            ));
                         }
                     }
                 }
@@ -228,7 +264,9 @@ async fn main() {
                         GREEN,
                     );
                 }
-
+                for (explosion, coords) in explosions.iter_mut() {
+                    explosion.draw(*coords);
+                }
                 draw_text(
                     format!("Score: {}", score).as_str(),
                     10.0,
