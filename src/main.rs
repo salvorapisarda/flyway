@@ -1,4 +1,5 @@
 use macroquad::prelude::*;
+use std::fs;
 
 struct Shape {
     size: f32,
@@ -45,6 +46,12 @@ async fn main() {
     number_block.y = clamp(number_block.y, 0.0, screen_height());
 
     let mut game_over = false;
+
+    let mut score: u32 = 0;
+    let mut high_score: u32 = fs::read_to_string("highscore.dat")
+        .map_or(Ok(0), |i| i.parse::<u32>())
+        .unwrap_or(0);
+
     loop {
         clear_background(DARKPURPLE);
 
@@ -119,6 +126,8 @@ async fn main() {
         for meteorite in meteorites.iter_mut() {
             for bullet in bullets.iter_mut() {
                 if bullet.collides_with(meteorite) {
+                    score += meteorite.size.round() as u32;
+                    high_score = high_score.max(score);
                     bullet.collided = true;
                     meteorite.collided = true;
                 }
@@ -126,10 +135,14 @@ async fn main() {
         }
 
         if game_over && is_key_pressed(KeyCode::Space) {
+            if score == high_score {
+                fs::write("highscore.dat", high_score.to_string()).ok();
+            }
             meteorites.clear();
             bullets.clear();
             number_block.x = screen_width() / 2.0;
             number_block.y = screen_height() / 2.0;
+            score = 0;
             game_over = false;
         }
 
@@ -147,6 +160,24 @@ async fn main() {
                 GREEN,
             );
         }
+
+        draw_text(
+            format!("Score: {}", score).as_str(),
+            10.0,
+            35.0,
+            25.0,
+            WHITE,
+        );
+        let highscore_text = format!("High score: {}", high_score);
+        let text_dimensions = measure_text(highscore_text.as_str(), None, 25, 1.0);
+        draw_text(
+            highscore_text.as_str(),
+            screen_width() - text_dimensions.width - 10.0,
+            35.0,
+            25.0,
+            WHITE,
+        );
+
         if game_over {
             let text = "GAME OVER!";
             let text_dimensions = measure_text(text, None, 50, 1.0);
