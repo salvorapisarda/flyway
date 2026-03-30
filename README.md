@@ -4,10 +4,10 @@ A small arcade number block shooter.
 
 ## What it does
 
-- You control the yellow player circle.
-- Green meteorites fall from the top of the screen.
-- Press `Space` to shoot red bullets.
-- If a meteorite hits the player, the game ends.
+- You control the yellow player ship.
+- Two meteor variants fall from the top of the screen.
+- Press `Space` to shoot animated laser bolts.
+- If a meteor hits the player, the game ends.
 - Press `Space` again on the game-over screen to restart.
 
 ## Controls
@@ -106,4 +106,4 @@ Click the canvas once to ensure it has keyboard focus, then try the arrow keys a
 
 ## Notes
 
-The game currently uses simple shapes only, so there are no external image or audio assets to package.
+The game uses image and audio assets from the `assets/` folder, so browser builds need the deploy files and local asset loading set up correctly.
